@@ -1,0 +1,46 @@
+version: 2
+jobs:
+  build:
+    filters:
+      branches:
+        only:
+          - master
+    docker:
+      - image: circleci/python:3.6.5
+    steps:
+      - checkout
+      - run:
+          name: Install packages
+          command: |
+            sudo apt update
+            sudo apt install openjdk-8-jdk
+            sudo pip install awscli
+      - run:
+          name: Build JAR
+          command: |
+            pwd
+            ls
+            ./mvnw clean package
+            pwd
+            ls -al
+            pwd
+      - run:
+          name: Build Deployment Artifact
+          command: |
+            echo "The current build number is ${CIRCLE_BUILD_NUM}"
+            pwd
+            ls -al
+            mkdir -p codedeploy_lambda
+            mv serverless-1.0-SNAPSHOT.jar codedeploy_lambda/
+            ls -al
+            pwd
+            cd codedeploy_lambda
+            ls -al
+            pwd
+            cd ..
+            pwd
+            ls -al
+
+      - run:
+          name: Upload Artifact to S3
+          command: aws s3 cp ./codedeploy_lambda/serverless-1.0-SNAPSHOT.jar s3://${S3_BUCKET_NAME}/serverless-1.0-SNAPSHOT.jar
