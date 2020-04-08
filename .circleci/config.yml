@@ -31,7 +31,7 @@ jobs:
             pwd
             ls -al
             mkdir -p codedeploy_lambda
-            mv serverless-1.0-SNAPSHOT.jar codedeploy_lambda/
+            mv target/serverless-1.0-SNAPSHOT.jar codedeploy_lambda/
             ls -al
             pwd
             cd codedeploy_lambda
